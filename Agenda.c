@@ -95,9 +95,39 @@ void listContacts ()
 }
 
 // Permite consultar um contato da agenda por nome
-void queryContact ()
+void queryContact (Contact *root)
 {
+     char name[30];
+     Contact *contact;
+
+     printf("Insira o nome do contato que deseja buscar na agenda: ");
+     scanf("%s", name);
+
+     contact = searchContact(root, name);
+
+     if(contact == NULL) {
+          printf("O contado não foi encontrado\n");
+     } else {
+          printContact(contact);
+     }
      return;
+}
+
+// Função responsável por buscar na árvore o contato com o nome desejado
+Contact* searchContact (Contact *root, char *name)
+{
+     if(root == NULL){
+          return NULL;
+     }
+     if(strcmp(tolower(root->name), tolower(name)) == 0){
+          return root;
+     }
+     if(strcmp(tolower(root->name), tolower(name)) > 0){
+          searchContact(root->left, name);
+     }
+     else{
+          searchContact(root->right,name);
+     }
 }
 
 // Permite a atualização dos dados de um contato da agenda
@@ -129,19 +159,17 @@ int main()
      int op=0;
      Contact *MContact = NULL;
 
-     insContact(MContact);
-
-//      while (op!=EXIT)
-//      {
-//           op=menu();
-//           switch(op)
-//           {
-//                case 1 : insContact(MContact);
-//                case 2 : delContact();
-//                case 3 : upContact();
-//                case 4 : queryContact();
-//                case 5 : listContacts();
-//           }
-//     }
+     while (op!=EXIT)
+     {
+          op=menu();
+          switch(op)
+          {
+               case 1 : insContact(MContact);
+               case 2 : delContact();
+               case 3 : upContact();
+               case 4 : queryContact(MContact);
+               case 5 : listContacts();
+          }
+    }
     return 0;
 }
