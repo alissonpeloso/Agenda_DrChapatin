@@ -11,7 +11,7 @@
 */
 
 #include <stdio.h> 
-#include "AVL.h"
+#include <string.h>
 
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
@@ -41,7 +41,7 @@ typedef struct MREC Contact;
 int menu()
 {
     int op=0;
-    while (op!=EXIT)
+    while (op!=EXIT || op!=1)
     {
         printf("%d Finaliza",EXIT);
         printf("\n: ");
@@ -51,9 +51,9 @@ int menu()
 }
 
 // Permite o cadastro de um contato
-Contact *insContact(Contact *root)
+void *insContact(Contact *root)
 {    
-     Contact *newContact;
+     Contact *newContact = (Contact *)malloc(sizeof(Contact));
      printf("Insira o nome do contato que deseja adicionar na agenda: ");
      scanf("%s", &newContact->name);
      printf("Insira o aniversário do contato: (dia/mes/ano) ");
@@ -62,20 +62,24 @@ Contact *insContact(Contact *root)
      scanf("%s", &newContact->email);
      printf("Insira o telefone do contato: ");
      scanf("%s", &newContact->phone);
+     return;
+}
 
+//Código com tratamento de recursividade para adicionar um contato na árvore AVL.
+Contact *AddContact(Contact *root, Contact *newContact){
      if (root == NULL){
         return newContact;
      } 
      else{
-        if(root->value >= newContact->value){
-            root->left = addNode(root->left, newContact);
-        }
-        else{
-            root->right = addNode(root->right, newContact);
-        }
-    }
-    root = balanceTree(root);
-    return root;
+          if(strcmp(tolower(root->name), tolower(newContact->name)) >= 0){
+            root->left = AddContact(root->left, newContact);
+          }
+          else{
+            root->right = AddContact(root->right, newContact);
+          }
+     }
+     root = balanceTree(root);
+     return root;
 }
 
 // Permite excluir um contato da agenda
@@ -102,6 +106,22 @@ void upContact ()
      return;
 }
 
+void print2DUtil(Contact *root, int space){ 
+     if (root == NULL){
+        return; 
+     }    
+     space += 10; 
+  
+     print2DUtil(root->right, space); 
+  
+     printf("\n"); 
+     for (int i = 10; i < space; i++) 
+        printf(" "); 
+     printf("%s\n", root->name); 
+   
+    print2DUtil(root->left, space); 
+}
+
 
 // Programa principal
 int main()
@@ -109,17 +129,19 @@ int main()
      int op=0;
      Contact *MContact = NULL;
 
-     while (op!=EXIT)
-     {
-          op=menu();
-          switch(op)
-          {
-               case 1 : insContact(MContact);
-               case 2 : delContact();
-               case 3 : upContact();
-               case 4 : queryContact();
-               case 5 : listContacts();
-          }
-    }
+     insContact(MContact);
+
+//      while (op!=EXIT)
+//      {
+//           op=menu();
+//           switch(op)
+//           {
+//                case 1 : insContact(MContact);
+//                case 2 : delContact();
+//                case 3 : upContact();
+//                case 4 : queryContact();
+//                case 5 : listContacts();
+//           }
+//     }
     return 0;
 }
