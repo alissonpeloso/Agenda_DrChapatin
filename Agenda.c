@@ -18,19 +18,19 @@
 //Struct que representa a data.
 typedef struct {
 	int day;
-	int month,
-	int year
+	int month;
+	int year;
 } Date;
 
 
 // Estrutura que contém os campos dos registros da agenda
 struct MREC {
-       char name[30];
-       Date  birth; 
-       char email[40];
-       char phone[15];
-	   struct MREC *next;
-	   struct MREC *prev;
+     char name[30];
+     Date  birth; 
+     char email[40];
+     char phone[15];
+	struct MREC *next;
+     struct MREC *prev;
 };
 
 // Tipo criado para instanciar variaveis do tipo agenda
@@ -45,8 +45,7 @@ int menu()
         printf("%d Finaliza",EXIT);
         printf("\n: ");
         scanf("%d",&op);
-       
-    }
+     }    
     return op;
 }
 
