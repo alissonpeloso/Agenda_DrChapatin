@@ -11,6 +11,7 @@
 */
 
 #include <stdio.h> 
+#include "AVL.h"
 
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
@@ -29,8 +30,8 @@ struct MREC {
      Date  birth; 
      char email[40];
      char phone[15];
-	struct MREC *next;
-     struct MREC *prev;
+	struct MREC *right;
+     struct MREC *left;
 };
 
 // Tipo criado para instanciar variaveis do tipo agenda
@@ -50,9 +51,31 @@ int menu()
 }
 
 // Permite o cadastro de um contato
-void insContact()
-{
-     return;
+Contact *insContact(Contact *root)
+{    
+     Contact *newContact;
+     printf("Insira o nome do contato que deseja adicionar na agenda: ");
+     scanf("%s", &newContact->name);
+     printf("Insira o aniversário do contato: (dia/mes/ano) ");
+     scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+     printf("Insira o email do contato: ");
+     scanf("%s", &newContact->email);
+     printf("Insira o telefone do contato: ");
+     scanf("%s", &newContact->phone);
+
+     if (root == NULL){
+        return newContact;
+     } 
+     else{
+        if(root->value >= newContact->value){
+            root->left = addNode(root->left, newContact);
+        }
+        else{
+            root->right = addNode(root->right, newContact);
+        }
+    }
+    root = balanceTree(root);
+    return root;
 }
 
 // Permite excluir um contato da agenda
@@ -82,20 +105,20 @@ void upContact ()
 
 // Programa principal
 int main()
-{
-    int op=0;
-    Contact MContact;
+{    
+     int op=0;
+     Contact *MContact = NULL;
 
-    while (op!=EXIT)
-    {
+     while (op!=EXIT)
+     {
           op=menu();
           switch(op)
           {
-              case 1 : insContact();
-              case 2 : delContact();
-              case 3 : upContact();
-              case 4 : queryContact();
-              case 5 : listContacts();
+               case 1 : insContact(MContact);
+               case 2 : delContact();
+               case 3 : upContact();
+               case 4 : queryContact();
+               case 5 : listContacts();
           }
     }
     return 0;

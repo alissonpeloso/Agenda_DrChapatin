@@ -143,22 +143,6 @@ node *balanceTree(node *root){
     return root;
 }
 
-node *addNode(node *root, node *newNode){
-    if (root == NULL){
-        return newNode;
-    } 
-    else{
-        if(root->value >= newNode->value){
-            root->left = addNode(root->left, newNode);
-        }
-        else{
-            root->right = addNode(root->right, newNode);
-        }
-    }
-    root = balanceTree(root);
-    return root;
-}
-
 void print2DUtil(node *root, int space){ 
     if (root == NULL) 
         return; 
