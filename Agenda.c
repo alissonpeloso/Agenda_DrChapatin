@@ -194,9 +194,20 @@ Contact *removeContact(Contact *root, Contact *contactDel)
 }
 
 // Lista o conteudo da agenda (todos os campos)
-void listContacts ()
+void listContacts (Contact * root)
 {
-    return;
+    if (root == NULL){
+        return;
+    }
+    else {
+        if(root->left != NULL) {
+            listContacts(root->left);
+        }
+        printContact(root);
+        if(root->right != NULL) {
+            listContacts(root->right);
+        }
+    }
 }
 
 // Função responsável por buscar na árvore o contato com o nome desejado
@@ -290,7 +301,8 @@ int main()
                 queryContact(MContact);
                 break;
             case 5 : 
-                listContacts();
+                printf("\nLista de contatos:\n\n");
+                listContacts(MContact);
                 break;
             default:
                 printf("\nOpção não existente\n");
