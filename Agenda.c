@@ -77,22 +77,17 @@ Contact *biggestNode(Contact *root);
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact){
     if (root == NULL){
-        printf("Entrou em NULL\n");
         return newContact;
     } 
     else{
-        printf("Entrou no Primeiro Else\n");
         if(strcasecmp(root->name,newContact->name) >= 0){
-            printf("Nome do Root é antes, coloca na esquerda\n"); 
             root->left = AddContact(root->left, newContact);
         }
-        else{
-            printf("Nome do Root é depois, coloca na direita\n"); 
+        else{ 
             root->right = AddContact(root->right, newContact);
         }
     }
     root = balanceTree(root);
-    printf("Fez o Balanceamento!\n");
     return root;
 }
 
@@ -110,63 +105,77 @@ Contact *insContact(Contact *root)
     printf("Insira o telefone do contato: ");
     scanf("%s", newContact->phone);
     root = AddContact(root,newContact);
-    print2DUtil(root,0);
     return root;
 }
 
 // Permite excluir um contato da agenda
-void delContact ()
+Contact *delContact (Contact *root)
 {   
+    char name[30];
+    Contact *contact;
 
+    printf("Insira o nome do contato que deseja deletar da agenda: ");
+    scanf("%s", name);
+
+    // contact = searchContact(root, name);
+
+    if(contact == NULL) {
+        printf("-----------------------------------------------------------------\n\n");
+        printf("O contado não foi encontrado\n");
+    } else {
+        printf("-----------------------------------------------------------------\n\n");
+        printf("Contato buscado:\n");
+        printContact(contact);
+    }
     return;
 }
 
-//Código com tratamento de recursividade para remover um contato na árvore AVL.
-Contact *removeContact(Contact *root, Contact *contactDel){
-    if (root == NULL){
-        return NULL;
-    } 
-    else{
-        if(root->value == value){
-            if(root->left == NULL && root->right == NULL){
-                free(root);
-                return NULL;
-            }
-            else if(root->left != NULL && root->right == NULL){
-                Contact *aux = root->left;
-                free(root);
-                return aux;
-            }
-            else if(root->left == NULL && root->right != NULL){
-                Contact *aux = root->right;
-                free(root);
-                return aux;
-            }
-            else{
-                Contact *newRoot;
-                if(root->left->right == NULL){
-                    newRoot = root->left;
-                    newRoot->right = root->right;
-                }
-                else{
-                    newRoot = biggestNode(root->left);
-                    newRoot->left = root->left;
-                    newRoot->right = root->right;
-                }
-                free(root);
-                return newRoot;
-            }
-        }
-        else if(root->value > value){
-            root->left = removeContact(root->left, value);
-        }
-        else{
-            root->right = removeContact(root->right, value);
-        }
-    }
-    root = balanceTree(root);
-    return root;
-}
+// //Código com tratamento de recursividade para remover um contato na árvore AVL.
+// Contact *removeContact(Contact *root, Contact *contactDel){
+//     if (root == NULL){
+//         return NULL;
+//     } 
+//     else{
+//         if(root->value == value){
+//             if(root->left == NULL && root->right == NULL){
+//                 free(root);
+//                 return NULL;
+//             }
+//             else if(root->left != NULL && root->right == NULL){
+//                 Contact *aux = root->left;
+//                 free(root);
+//                 return aux;
+//             }
+//             else if(root->left == NULL && root->right != NULL){
+//                 Contact *aux = root->right;
+//                 free(root);
+//                 return aux;
+//             }
+//             else{
+//                 Contact *newRoot;
+//                 if(root->left->right == NULL){
+//                     newRoot = root->left;
+//                     newRoot->right = root->right;
+//                 }
+//                 else{
+//                     newRoot = biggestNode(root->left);
+//                     newRoot->left = root->left;
+//                     newRoot->right = root->right;
+//                 }
+//                 free(root);
+//                 return newRoot;
+//             }
+//         }
+//         else if(root->value > value){
+//             root->left = removeContact(root->left, value);
+//         }
+//         else{
+//             root->right = removeContact(root->right, value);
+//         }
+//     }
+//     root = balanceTree(root);
+//     return root;
+// }
 
 // Lista o conteudo da agenda (todos os campos)
 void listContacts ()
@@ -253,7 +262,7 @@ int main()
                 MContact = insContact(MContact);
                 break;
             case 2 : 
-                delContact();
+                MContact = delContact(MContact);
                 break;
             case 3 : 
                 upContact();
@@ -311,14 +320,14 @@ Contact *LL(Contact *root){
 }
 
 Contact *LR(Contact *root){
-    Contact *newRoot = RR(root->left);
-    newRoot = LL(root);
+    root->left = RR(root->left);
+    Contact *newRoot = LL(root);
     return newRoot;
 }
 
 Contact *RL(Contact *root){
-    Contact *newRoot = LL(root->right);
-    newRoot = RR(root);
+    root->right = LL(root->right);
+    Contact *newRoot = RR(root);
     return newRoot;
 }
 
