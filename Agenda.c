@@ -25,7 +25,6 @@ typedef struct {
 	int year;
 } Date;
 
-
 // Estrutura que contém os campos dos registros da agenda
 struct MREC {
      char name[30];
@@ -38,6 +37,22 @@ struct MREC {
 
 // Tipo criado para instanciar variaveis do tipo agenda
 typedef struct MREC Contact;
+
+//Função para deixar a string em lower case
+void toLowercase(char *str, int size){
+     for(int i = 0; i < size; i++){
+          str[i] = tolower(str[i]);
+     }
+}
+
+// Função responsável por imprimir um contato
+void printContact(Contact *contact){
+     printf("Nome: %s\n", contact->name);
+     printf("Nascimento: %d/%d/%d\n", contact->birth.day, contact->birth.month, contact->birth.year);
+     printf("Email: %s\n", contact->email);
+     printf("Telefone: %s\n", contact->phone);
+     printf("-----------------------------------------------------------------\n");
+}
 
 // Apresenta o menu da aplicação e retorna a opção selecionada
 int menu()
@@ -106,13 +121,18 @@ void listContacts ()
 // Função responsável por buscar na árvore o contato com o nome desejado
 Contact* searchContact (Contact *root, char *name)
 {
+     char contact_name[30];
+     strcpy(contact_name, root->name);
+     toLowercase(contact_name, sizeof(contact_name));
+     toLowercase(name, sizeof(name));
+
      if(root == NULL){
           return NULL;
      }
-     if(strcmp(tolower(root->name), tolower(name)) == 0){
+     if(strcmp(contact_name, name) == 0){
           return root;
      }
-     if(strcmp(tolower(root->name), tolower(name)) > 0){
+     if(strcmp(contact_name, name) > 0){
           searchContact(root->left, name);
      }
      else{
