@@ -40,9 +40,10 @@ typedef struct MREC Contact;
 
 //Função para deixar a string em lower case
 void toLowercase(char *str, int size){
-     for(int i = 0; i < size; i++){
-          str[i] = tolower(str[i]);
-     }
+    // char newStr[size];
+    for(int i = 0; i < size; i++){
+        str[i] = tolower(str[i]);
+    }
 }
 
 // Função responsável por imprimir um contato
@@ -83,25 +84,28 @@ Contact *balanceTree(Contact *root);
 
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact){
-     if (root == NULL){
+    if (root == NULL){
         return newContact;
-     } 
-     else{
-          if(strcmp(tolower(root->name), tolower(newContact->name)) >= 0){
+    } 
+    else{
+        toLowercase(root->name, sizeof(root->name));
+        toLowercase(newContact->name,sizeof(newContact->name));
+        if(strcmp(root->name,newContact->name) >= 0){
             root->left = AddContact(root->left, newContact);
-          }
-          else{
+        }
+        else{
             root->right = AddContact(root->right, newContact);
-          }
-     }
-     root = balanceTree(root);
-     return root;
+        }
+    }
+    root = balanceTree(root);
+    return root;
 }
 
 // Permite o cadastro de um contato
-void *insContact(Contact *root)
+Contact *insContact(Contact *root)
 {    
     Contact *newContact = (Contact *) malloc(sizeof(Contact));
+    printf("\n");
     printf("Insira o nome do contato que deseja adicionar na agenda: ");
     scanf("%s", newContact->name);
     printf("Insira o aniversário do contato: (dia/mes/ano) ");
@@ -110,8 +114,8 @@ void *insContact(Contact *root)
     scanf("%s", newContact->email);
     printf("Insira o telefone do contato: ");
     scanf("%s", newContact->phone);
-    printContact(newContact);
     root = AddContact(root,newContact);
+    return root;
 }
 
 // Permite excluir um contato da agenda
@@ -195,13 +199,14 @@ int main()
 {    
     int op=0;
     Contact *MContact = NULL;
+    print2DUtil(MContact, 0);
 
     while (op!=EXIT)
     {
         op=menu();
         switch(op) {
             case 1 : 
-                insContact(MContact);
+                MContact = insContact(MContact);
                 break;
             case 2 : 
                 delContact();
