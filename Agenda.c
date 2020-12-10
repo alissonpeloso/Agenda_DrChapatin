@@ -116,13 +116,13 @@ Contact *insContact(Contact *root)
 // Permite excluir um contato da agenda
 void delContact ()
 {
-     return;
+    return;
 }
 
 // Lista o conteudo da agenda (todos os campos)
 void listContacts ()
 {
-     return;
+    return;
 }
 
 // Função responsável por buscar na árvore o contato com o nome desejado
@@ -194,40 +194,30 @@ int main()
 {    
     int op=0;
     Contact *MContact = NULL;
-    MContact = insContact(MContact);
-    printf("Tamanho da arvore: %d\n", heightThree(MContact));
-    MContact = insContact(MContact);
-    printf("Tamanho da arvore: %d\n", heightThree(MContact));
-    MContact = insContact(MContact);
-    printf("Tamanho da arvore: %d\n", heightThree(MContact));
-    MContact = insContact(MContact);
-    printf("Tamanho da arvore: %d\n", heightThree(MContact));
-    MContact = insContact(MContact);
-    printf("Tamanho da arvore: %d\n", heightThree(MContact));
 
-    // while (op!=EXIT)
-    // {
-    //     op=menu();
-    //     switch(op) {
-    //         case 1 : 
-    //             MContact = insContact(MContact);
-    //             break;
-    //         case 2 : 
-    //             delContact();
-    //             break;
-    //         case 3 : 
-    //             upContact();
-    //             break;
-    //         case 4 : 
-    //             queryContact(MContact);
-    //             break;
-    //         case 5 : 
-    //             listContacts();
-    //             break;
-    //         default:
-    //             printf("\nOpção não existente\n");
-    //     }
-    // }
+    while (op!=EXIT)
+    {
+        op=menu();
+        switch(op) {
+            case 1 : 
+                MContact = insContact(MContact);
+                break;
+            case 2 : 
+                delContact();
+                break;
+            case 3 : 
+                upContact();
+                break;
+            case 4 : 
+                queryContact(MContact);
+                break;
+            case 5 : 
+                listContacts();
+                break;
+            default:
+                printf("\nOpção não existente\n");
+        }
+    }
     return 0;
 }
 
