@@ -58,12 +58,18 @@ void printContact(Contact *contact){
 int menu()
 {
     int op=0;
-    while (op!=EXIT || op!=1)
-    {
-        printf("%d Finaliza",EXIT);
-        printf("\n: ");
-        scanf("%d",&op);
-     }    
+
+    printf("-----------------------------------------------------------------\n\n");
+    printf("Para Encerrar o programa digite: %d\n", EXIT);     
+    printf("Para adicionar um novo contato digite: 1\n");     
+    printf("Para deletar um contato digite: 2\n");     
+    printf("Para atualizar um contato digite: 3\n");     
+    printf("Para buscar um contato digite: 4\n");     
+    printf("Para listar os contatos digite: 5\n");     
+
+    printf("\nOpção desejada: ");
+    scanf("%d",&op);
+     
     return op;
 }
 
@@ -187,24 +193,32 @@ void print2DUtil(Contact *root, int space){
 // Programa principal
 int main()
 {    
-     int op=0;
-     Contact *MContact;
-     insContact(MContact);
-     printContact(MContact);
-     print2DUtil(MContact, 5);
+    int op=0;
+    Contact *MContact = NULL;
 
-//      while (op!=EXIT)
-//      {
-//           op=menu();
-//           switch(op)
-//           {
-//                case 1 : insContact(MContact);
-//                case 2 : delContact();
-//                case 3 : upContact();
-//                case 4 : queryContact(MContact);
-//                case 5 : listContacts();
-//           }
-//     }
+    while (op!=EXIT)
+    {
+        op=menu();
+        switch(op) {
+            case 1 : 
+                insContact(MContact);
+                break;
+            case 2 : 
+                delContact();
+                break;
+            case 3 : 
+                upContact();
+                break;
+            case 4 : 
+                queryContact(MContact);
+                break;
+            case 5 : 
+                listContacts();
+                break;
+            default:
+                printf("\nOpção não existente\n");
+        }
+    }
     return 0;
 }
 
