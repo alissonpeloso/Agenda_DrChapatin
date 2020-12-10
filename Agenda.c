@@ -11,6 +11,8 @@
 */
 
 #include <stdio.h> 
+#include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 
 
@@ -53,17 +55,24 @@ int menu()
 // Permite o cadastro de um contato
 void *insContact(Contact *root)
 {    
-     Contact *newContact = (Contact *)malloc(sizeof(Contact));
+     Contact *newContact = (Contact *) malloc(sizeof(Contact));
      printf("Insira o nome do contato que deseja adicionar na agenda: ");
-     scanf("%s", &newContact->name);
+     scanf("%s", newContact->name);
      printf("Insira o aniversário do contato: (dia/mes/ano) ");
      scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
      printf("Insira o email do contato: ");
-     scanf("%s", &newContact->email);
+     scanf("%s", newContact->email);
      printf("Insira o telefone do contato: ");
-     scanf("%s", &newContact->phone);
-     return;
+     scanf("%s", newContact->phone);
 }
+
+int heightThree(Contact *root);
+Contact *RR(Contact *root);
+Contact *LL(Contact *root);
+Contact *LR(Contact *root);
+Contact *RL(Contact *root);
+int fBalance(Contact *root);
+Contact *balanceTree(Contact *root);
 
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact){
@@ -71,7 +80,7 @@ Contact *AddContact(Contact *root, Contact *newContact){
         return newContact;
      } 
      else{
-          if(strcmp(tolower(root->name), tolower(newContact->name)) >= 0){
+          if(strcmp(tolower((char *)root->name), tolower(newContact->name)) >= 0){
             root->left = AddContact(root->left, newContact);
           }
           else{
@@ -94,6 +103,23 @@ void listContacts ()
      return;
 }
 
+// Função responsável por buscar na árvore o contato com o nome desejado
+Contact* searchContact (Contact *root, char *name)
+{
+     if(root == NULL){
+          return NULL;
+     }
+     if(strcmp(tolower(root->name), tolower(name)) == 0){
+          return root;
+     }
+     if(strcmp(tolower(root->name), tolower(name)) > 0){
+          searchContact(root->left, name);
+     }
+     else{
+          searchContact(root->right,name);
+     }
+}
+
 // Permite consultar um contato da agenda por nome
 void queryContact (Contact *root)
 {
@@ -111,23 +137,6 @@ void queryContact (Contact *root)
           printContact(contact);
      }
      return;
-}
-
-// Função responsável por buscar na árvore o contato com o nome desejado
-Contact* searchContact (Contact *root, char *name)
-{
-     if(root == NULL){
-          return NULL;
-     }
-     if(strcmp(tolower(root->name), tolower(name)) == 0){
-          return root;
-     }
-     if(strcmp(tolower(root->name), tolower(name)) > 0){
-          searchContact(root->left, name);
-     }
-     else{
-          searchContact(root->right,name);
-     }
 }
 
 // Permite a atualização dos dados de um contato da agenda
@@ -172,4 +181,78 @@ int main()
           }
     }
     return 0;
+}
+
+int biggestInt(int a, int b){
+    return (a > b) ? a : b; 
+}
+
+int heightThree(Contact *root){
+    int right=0, left=0;
+    if (root == NULL){
+        return 0;
+    }
+    else{
+        if (root->left == NULL && root->right == NULL){
+            return 1;
+        }
+        else{
+            if (root->right != NULL){
+                right = (1 + heightThree(root->right));
+            }
+            if (root->left != NULL){
+                left = (1 + heightThree(root->left));
+            }
+            return biggestInt(right, left);
+        }
+    }
+}
+
+Contact *RR(Contact *root){
+    Contact *newRoot = root->right;
+    root->right = newRoot->left;
+    newRoot->left = root;
+    return newRoot;
+}
+
+Contact *LL(Contact *root){
+    Contact *newRoot = root->left;
+    root->left = newRoot->right;
+    newRoot->right = root;
+    return newRoot;
+}
+
+Contact *LR(Contact *root){
+    Contact *newRoot = RR(root->left);
+    newRoot = LL(root);
+    return newRoot;
+}
+
+Contact *RL(Contact *root){
+    Contact *newRoot = LL(root->right);
+    newRoot = RR(root);
+    return newRoot;
+}
+
+int fBalance(Contact *root){
+    int heightLeft = heightThree(root->left), heightRight = heightThree(root->right);
+    return (heightLeft-heightRight);
+}
+
+Contact *balanceTree(Contact *root){
+    int diff = fBalance(root);
+    if(diff > 1){
+        if(fBalance(root->left) < 0){
+            root = LR(root);
+        } else{
+            root = LL(root);
+        }
+    }else if(diff < -1){
+        if(fBalance(root->right) < 0){
+            root = RR(root);
+        } else{
+            root = RL(root);
+        }
+    }
+    return root;
 }
