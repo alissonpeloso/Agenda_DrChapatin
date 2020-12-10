@@ -156,28 +156,30 @@ Contact *removeContact(Contact *root, Contact *contactDel)
                 return NULL;
             }
             else if(root->left != NULL && root->right == NULL){
-                Contact *aux = root->left;
-                free(root);
-                return aux;
+                Contact *newRoot = root->left;
+                // free(root); Não conseguimos dar free no Root, causa Segmentarion Fault
+                return newRoot;
             }
             else if(root->left == NULL && root->right != NULL){
-                Contact *aux = root->right;
-                free(root);
-                return aux;
+                Contact *newRoot = root->right;
+                // free(root);
+                return newRoot;
             }
             else{
                 Contact *newRoot;
                 if(root->left->right == NULL){
                     newRoot = root->left;
                     newRoot->right = root->right;
+                    // free(root);
+                    return newRoot;
                 }
                 else{
                     newRoot = biggestNode(root->left);
                     newRoot->left = root->left;
                     newRoot->right = root->right;
+                    // free(root);
+                    return newRoot;
                 }
-                free(root);
-                return newRoot;
             }
         }
         else if(strcasecmp(root->name,contactDel->name) > 0){
