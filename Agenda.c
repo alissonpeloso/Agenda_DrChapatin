@@ -15,7 +15,6 @@
 #include <ctype.h>
 #include <string.h>
 
-
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
 //Struct que representa a data.
@@ -27,24 +26,16 @@ typedef struct {
 
 // Estrutura que contém os campos dos registros da agenda
 struct MREC {
-     char name[30];
-     Date  birth; 
-     char email[40];
-     char phone[15];
+    char name[30];
+    Date  birth; 
+    char email[40];
+    char phone[15];
 	struct MREC *right;
-     struct MREC *left;
+    struct MREC *left;
 };
 
 // Tipo criado para instanciar variaveis do tipo agenda
 typedef struct MREC Contact;
-
-//Função para deixar a string em lower case
-void toLowercase(char *str, int size){
-    // char newStr[size];
-    for(int i = 0; i < size; i++){
-        str[i] = tolower(str[i]);
-    }
-}
 
 // Função responsável por imprimir um contato
 void printContact(Contact *contact){
@@ -85,19 +76,22 @@ Contact *balanceTree(Contact *root);
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact){
     if (root == NULL){
+        printf("Entrou em NULL\n");
         return newContact;
     } 
     else{
-        toLowercase(root->name, sizeof(root->name));
-        toLowercase(newContact->name,sizeof(newContact->name));
-        if(strcmp(root->name,newContact->name) >= 0){
+        printf("Entrou no Primeiro Else\n");
+        if(strcasecmp(root->name,newContact->name) >= 0){
+            printf("Nome do Root é antes, coloca na esquerda\n"); 
             root->left = AddContact(root->left, newContact);
         }
         else{
+            printf("Nome do Root é depois, coloca na direita\n"); 
             root->right = AddContact(root->right, newContact);
         }
     }
     root = balanceTree(root);
+    printf("Fez o Balanceamento!\n");
     return root;
 }
 
@@ -115,6 +109,7 @@ Contact *insContact(Contact *root)
     printf("Insira o telefone do contato: ");
     scanf("%s", newContact->phone);
     root = AddContact(root,newContact);
+    print2DUtil(root,0);
     return root;
 }
 
@@ -135,8 +130,8 @@ Contact* searchContact (Contact *root, char *name)
 {
      char contact_name[30];
      strcpy(contact_name, root->name);
-     toLowercase(contact_name, sizeof(contact_name));
-     toLowercase(name, sizeof(name));
+    //  toLowercase(contact_name, sizeof(contact_name));
+    //  toLowercase(name, sizeof(name));
 
      if(root == NULL){
           return NULL;
@@ -199,31 +194,40 @@ int main()
 {    
     int op=0;
     Contact *MContact = NULL;
-    print2DUtil(MContact, 0);
+    MContact = insContact(MContact);
+    printf("Tamanho da arvore: %d\n", heightThree(MContact));
+    MContact = insContact(MContact);
+    printf("Tamanho da arvore: %d\n", heightThree(MContact));
+    MContact = insContact(MContact);
+    printf("Tamanho da arvore: %d\n", heightThree(MContact));
+    MContact = insContact(MContact);
+    printf("Tamanho da arvore: %d\n", heightThree(MContact));
+    MContact = insContact(MContact);
+    printf("Tamanho da arvore: %d\n", heightThree(MContact));
 
-    while (op!=EXIT)
-    {
-        op=menu();
-        switch(op) {
-            case 1 : 
-                MContact = insContact(MContact);
-                break;
-            case 2 : 
-                delContact();
-                break;
-            case 3 : 
-                upContact();
-                break;
-            case 4 : 
-                queryContact(MContact);
-                break;
-            case 5 : 
-                listContacts();
-                break;
-            default:
-                printf("\nOpção não existente\n");
-        }
-    }
+    // while (op!=EXIT)
+    // {
+    //     op=menu();
+    //     switch(op) {
+    //         case 1 : 
+    //             MContact = insContact(MContact);
+    //             break;
+    //         case 2 : 
+    //             delContact();
+    //             break;
+    //         case 3 : 
+    //             upContact();
+    //             break;
+    //         case 4 : 
+    //             queryContact(MContact);
+    //             break;
+    //         case 5 : 
+    //             listContacts();
+    //             break;
+    //         default:
+    //             printf("\nOpção não existente\n");
+    //     }
+    // }
     return 0;
 }
 
@@ -288,10 +292,12 @@ Contact *balanceTree(Contact *root){
     if(diff > 1){
         if(fBalance(root->left) < 0){
             root = LR(root);
-        } else{
+        } 
+        else{
             root = LL(root);
         }
-    }else if(diff < -1){
+    }
+    else if(diff < -1){
         if(fBalance(root->right) < 0){
             root = RR(root);
         } else{
