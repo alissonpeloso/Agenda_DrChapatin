@@ -177,22 +177,20 @@ void listContacts ()
 // Função responsável por buscar na árvore o contato com o nome desejado
 Contact* searchContact (Contact *root, char *name)
 {
-    char contact_name[30];
-    strcpy(contact_name, root->name);
-    //  toLowercase(contact_name, sizeof(contact_name));
-    //  toLowercase(name, sizeof(name));
-
-    if(root == NULL){
+   if(root == NULL){
         return NULL;
-    }
-    if(strcmp(contact_name, name) == 0){
-        return root;
-    }
-    if(strcmp(contact_name, name) > 0){
-        searchContact(root->left, name);
-    }
-    else{
-        searchContact(root->right,name);
+    } else {
+        int name_compare = strcasecmp(root->name, name);
+
+        if(name_compare == 0){
+            return root;
+        }
+        if(name_compare > 0){
+            searchContact(root->left, name);
+        }
+        else{
+            searchContact(root->right, name);
+        }
     }
 }
 
@@ -208,8 +206,11 @@ void queryContact (Contact *root)
     contact = searchContact(root, name);
 
     if(contact == NULL) {
+        printf("-----------------------------------------------------------------\n\n");
         printf("O contado não foi encontrado\n");
     } else {
+        printf("-----------------------------------------------------------------\n\n");
+        printf("Contato buscado:\n");
         printContact(contact);
     }
     return;
