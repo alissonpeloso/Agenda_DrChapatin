@@ -127,12 +127,11 @@ Contact *insContact(Contact *root)
 Contact *delContact (Contact *root)
 {   
     char name[30];
-    Contact *contact;
 
     printf("Insira o nome do contato que deseja deletar da agenda: ");
     scanf("%s", name);
 
-    contact = searchContact(root, name);
+    Contact *contact = searchContact(root, name);
 
     if(contact == NULL) {
         printf("-----------------------------------------------------------------\n\n");
@@ -140,7 +139,7 @@ Contact *delContact (Contact *root)
     } else {
         root = removeContact(root,contact);
     }
-    return root;
+    return;
 }
 
 //Código com tratamento de recursividade para remover um contato na árvore AVL.
@@ -157,12 +156,12 @@ Contact *removeContact(Contact *root, Contact *contactDel)
             }
             else if(root->left != NULL && root->right == NULL){
                 Contact *newRoot = root->left;
-                // free(root); Não conseguimos dar free no Root, causa Segmentarion Fault
+                free(root); /*Não conseguimos dar free no Root, causa Segmentarion Fault*/
                 return newRoot;
             }
             else if(root->left == NULL && root->right != NULL){
                 Contact *newRoot = root->right;
-                // free(root);
+                free(root);
                 return newRoot;
             }
             else{
@@ -170,14 +169,14 @@ Contact *removeContact(Contact *root, Contact *contactDel)
                 if(root->left->right == NULL){
                     newRoot = root->left;
                     newRoot->right = root->right;
-                    // free(root);
+                    free(root);
                     return newRoot;
                 }
                 else{
                     newRoot = biggestNode(root->left);
                     newRoot->left = root->left;
                     newRoot->right = root->right;
-                    // free(root);
+                    free(root);
                     return newRoot;
                 }
             }
@@ -288,11 +287,11 @@ int main()
         switch(op) {
             case 1 : 
                 MContact = insContact(MContact);
-                // print2DUtil(MContact,0);
+                print2DUtil(MContact,0);
                 break;
             case 2 : 
                 MContact = delContact(MContact);
-                // print2DUtil(MContact,0);
+                print2DUtil(MContact,0);
                 break;
             case 3 : 
                 upContact();
