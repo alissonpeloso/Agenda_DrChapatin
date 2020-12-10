@@ -67,20 +67,6 @@ int menu()
     return op;
 }
 
-// Permite o cadastro de um contato
-void *insContact(Contact *root)
-{    
-     Contact *newContact = (Contact *) malloc(sizeof(Contact));
-     printf("Insira o nome do contato que deseja adicionar na agenda: ");
-     scanf("%s", newContact->name);
-     printf("Insira o aniversário do contato: (dia/mes/ano) ");
-     scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
-     printf("Insira o email do contato: ");
-     scanf("%s", newContact->email);
-     printf("Insira o telefone do contato: ");
-     scanf("%s", newContact->phone);
-}
-
 int heightThree(Contact *root);
 Contact *RR(Contact *root);
 Contact *LL(Contact *root);
@@ -95,7 +81,7 @@ Contact *AddContact(Contact *root, Contact *newContact){
         return newContact;
      } 
      else{
-          if(strcmp(tolower((char *)root->name), tolower(newContact->name)) >= 0){
+          if(strcmp(tolower(root->name), tolower(newContact->name)) >= 0){
             root->left = AddContact(root->left, newContact);
           }
           else{
@@ -104,6 +90,22 @@ Contact *AddContact(Contact *root, Contact *newContact){
      }
      root = balanceTree(root);
      return root;
+}
+
+// Permite o cadastro de um contato
+void *insContact(Contact *root)
+{    
+    Contact *newContact = (Contact *) malloc(sizeof(Contact));
+    printf("Insira o nome do contato que deseja adicionar na agenda: ");
+    scanf("%s", newContact->name);
+    printf("Insira o aniversário do contato: (dia/mes/ano) ");
+    scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+    printf("Insira o email do contato: ");
+    scanf("%s", newContact->email);
+    printf("Insira o telefone do contato: ");
+    scanf("%s", newContact->phone);
+    printContact(newContact);
+    root = AddContact(root,newContact);
 }
 
 // Permite excluir um contato da agenda
@@ -137,7 +139,7 @@ Contact* searchContact (Contact *root, char *name)
      }
      else{
           searchContact(root->right,name);
-     }
+    }
 }
 
 // Permite consultar um contato da agenda por nome
@@ -186,20 +188,23 @@ void print2DUtil(Contact *root, int space){
 int main()
 {    
      int op=0;
-     Contact *MContact = NULL;
+     Contact *MContact;
+     insContact(MContact);
+     printContact(MContact);
+     print2DUtil(MContact, 5);
 
-     while (op!=EXIT)
-     {
-          op=menu();
-          switch(op)
-          {
-               case 1 : insContact(MContact);
-               case 2 : delContact();
-               case 3 : upContact();
-               case 4 : queryContact(MContact);
-               case 5 : listContacts();
-          }
-    }
+//      while (op!=EXIT)
+//      {
+//           op=menu();
+//           switch(op)
+//           {
+//                case 1 : insContact(MContact);
+//                case 2 : delContact();
+//                case 3 : upContact();
+//                case 4 : queryContact(MContact);
+//                case 5 : listContacts();
+//           }
+//     }
     return 0;
 }
 
