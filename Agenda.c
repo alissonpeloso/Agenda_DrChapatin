@@ -288,11 +288,11 @@ int main()
         switch(op) {
             case 1 : 
                 MContact = insContact(MContact);
-                print2DUtil(MContact,0);
+                // print2DUtil(MContact,0);
                 break;
             case 2 : 
                 MContact = delContact(MContact);
-                print2DUtil(MContact,0);
+                // print2DUtil(MContact,0);
                 break;
             case 3 : 
                 upContact();
