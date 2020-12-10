@@ -72,6 +72,7 @@ Contact *LR(Contact *root);
 Contact *RL(Contact *root);
 int fBalance(Contact *root);
 Contact *balanceTree(Contact *root);
+Contact *biggestNode(Contact *root);
 
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact){
@@ -115,8 +116,56 @@ Contact *insContact(Contact *root)
 
 // Permite excluir um contato da agenda
 void delContact ()
-{
+{   
+
     return;
+}
+
+//Código com tratamento de recursividade para remover um contato na árvore AVL.
+Contact *removeContact(Contact *root, Contact *contactDel){
+    if (root == NULL){
+        return NULL;
+    } 
+    else{
+        if(root->value == value){
+            if(root->left == NULL && root->right == NULL){
+                free(root);
+                return NULL;
+            }
+            else if(root->left != NULL && root->right == NULL){
+                Contact *aux = root->left;
+                free(root);
+                return aux;
+            }
+            else if(root->left == NULL && root->right != NULL){
+                Contact *aux = root->right;
+                free(root);
+                return aux;
+            }
+            else{
+                Contact *newRoot;
+                if(root->left->right == NULL){
+                    newRoot = root->left;
+                    newRoot->right = root->right;
+                }
+                else{
+                    newRoot = biggestNode(root->left);
+                    newRoot->left = root->left;
+                    newRoot->right = root->right;
+                }
+                free(root);
+                return newRoot;
+            }
+        }
+        else if(root->value > value){
+            root->left = removeContact(root->left, value);
+        }
+        else{
+            root->right = removeContact(root->right, value);
+        }
+    }
+    root = balanceTree(root);
+    return root;
 }
 
 // Lista o conteudo da agenda (todos os campos)
@@ -128,62 +177,62 @@ void listContacts ()
 // Função responsável por buscar na árvore o contato com o nome desejado
 Contact* searchContact (Contact *root, char *name)
 {
-     char contact_name[30];
-     strcpy(contact_name, root->name);
+    char contact_name[30];
+    strcpy(contact_name, root->name);
     //  toLowercase(contact_name, sizeof(contact_name));
     //  toLowercase(name, sizeof(name));
 
-     if(root == NULL){
-          return NULL;
-     }
-     if(strcmp(contact_name, name) == 0){
-          return root;
-     }
-     if(strcmp(contact_name, name) > 0){
-          searchContact(root->left, name);
-     }
-     else{
-          searchContact(root->right,name);
+    if(root == NULL){
+        return NULL;
+    }
+    if(strcmp(contact_name, name) == 0){
+        return root;
+    }
+    if(strcmp(contact_name, name) > 0){
+        searchContact(root->left, name);
+    }
+    else{
+        searchContact(root->right,name);
     }
 }
 
 // Permite consultar um contato da agenda por nome
 void queryContact (Contact *root)
 {
-     char name[30];
-     Contact *contact;
+    char name[30];
+    Contact *contact;
 
-     printf("Insira o nome do contato que deseja buscar na agenda: ");
-     scanf("%s", name);
+    printf("Insira o nome do contato que deseja buscar na agenda: ");
+    scanf("%s", name);
 
-     contact = searchContact(root, name);
+    contact = searchContact(root, name);
 
-     if(contact == NULL) {
-          printf("O contado não foi encontrado\n");
-     } else {
-          printContact(contact);
-     }
-     return;
+    if(contact == NULL) {
+        printf("O contado não foi encontrado\n");
+    } else {
+        printContact(contact);
+    }
+    return;
 }
 
 // Permite a atualização dos dados de um contato da agenda
 void upContact ()
 {
-     return;
+    return;
 }
 
 void print2DUtil(Contact *root, int space){ 
-     if (root == NULL){
-        return; 
-     }    
-     space += 10; 
-  
-     print2DUtil(root->right, space); 
-  
-     printf("\n"); 
-     for (int i = 10; i < space; i++) 
-        printf(" "); 
-     printf("%s\n", root->name); 
+    if (root == NULL){
+    return; 
+    }    
+    space += 10; 
+
+    print2DUtil(root->right, space); 
+
+    printf("\n"); 
+    for (int i = 10; i < space; i++) 
+    printf(" "); 
+    printf("%s\n", root->name); 
    
     print2DUtil(root->left, space); 
 }
@@ -294,5 +343,22 @@ Contact *balanceTree(Contact *root){
             root = RL(root);
         }
     }
+    return root;
+}
+
+Contact *biggestNode(Contact *root){
+    Contact *father = root;
+
+    if (root == NULL){
+        printf("Não pode entrar aqui, se entra tem erro de lógica.\n\n");
+    }
+
+    root = root->right;
+    while(root->right != NULL){
+        father = root;
+        root = root->right;
+    }
+    //aqui o root ja é o maior, não tem filhos a direita.
+    father->right = root->left; //tirei o root da árvore
     return root;
 }
