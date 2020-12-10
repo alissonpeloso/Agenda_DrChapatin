@@ -11,6 +11,8 @@
 */
 
 #include <stdio.h> 
+#include <string.h>
+#include <ctype.h>
 #include "AVL.h"
 
 
@@ -22,7 +24,6 @@ typedef struct {
 	int month;
 	int year;
 } Date;
-
 
 // Estrutura que contém os campos dos registros da agenda
 struct MREC {
@@ -36,6 +37,22 @@ struct MREC {
 
 // Tipo criado para instanciar variaveis do tipo agenda
 typedef struct MREC Contact;
+
+//Função para deixar a string em lower case
+void toLowercase(char *str, int size){
+     for(int i = 0; i < size; i++){
+          str[i] = tolower(str[i]);
+     }
+}
+
+// Função responsável por imprimir um contato
+void printContact(Contact *contact){
+     printf("Nome: %s\n", contact->name);
+     printf("Nascimento: %d/%d/%d\n", contact->birth.day, contact->birth.month, contact->birth.year);
+     printf("Email: %s\n", contact->email);
+     printf("Telefone: %s\n", contact->phone);
+     printf("-----------------------------------------------------------------\n");
+}
 
 // Apresenta o menu da aplicação e retorna a opção selecionada
 int menu()
@@ -53,29 +70,29 @@ int menu()
 // Permite o cadastro de um contato
 Contact *insContact(Contact *root)
 {    
-     Contact *newContact;
-     printf("Insira o nome do contato que deseja adicionar na agenda: ");
-     scanf("%s", &newContact->name);
-     printf("Insira o aniversário do contato: (dia/mes/ano) ");
-     scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
-     printf("Insira o email do contato: ");
-     scanf("%s", &newContact->email);
-     printf("Insira o telefone do contato: ");
-     scanf("%s", &newContact->phone);
+//      Contact *newContact;
+//      printf("Insira o nome do contato que deseja adicionar na agenda: ");
+//      scanf("%s", &newContact->name);
+//      printf("Insira o aniversário do contato: (dia/mes/ano) ");
+//      scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+//      printf("Insira o email do contato: ");
+//      scanf("%s", &newContact->email);
+//      printf("Insira o telefone do contato: ");
+//      scanf("%s", &newContact->phone);
 
-     if (root == NULL){
-        return newContact;
-     } 
-     else{
-        if(root->value >= newContact->value){
-            root->left = addNode(root->left, newContact);
-        }
-        else{
-            root->right = addNode(root->right, newContact);
-        }
-    }
-    root = balanceTree(root);
-    return root;
+//      if (root == NULL){
+//         return newContact;
+//      } 
+//      else{
+//         if(root->value >= newContact->value){
+//             root->left = addNode(root->left, newContact);
+//         }
+//         else{
+//             root->right = addNode(root->right, newContact);
+//         }
+//     }
+//     root = balanceTree(root);
+//     return root;
 }
 
 // Permite excluir um contato da agenda
@@ -88,6 +105,28 @@ void delContact ()
 void listContacts ()
 {
      return;
+}
+
+// Função responsável por buscar na árvore o contato com o nome desejado
+Contact* searchContact (Contact *root, char *name)
+{
+     char contact_name[30];
+     strcpy(contact_name, root->name);
+     toLowercase(contact_name, sizeof(contact_name));
+     toLowercase(name, sizeof(name));
+
+     if(root == NULL){
+          return NULL;
+     }
+     if(strcmp(contact_name, name) == 0){
+          return root;
+     }
+     if(strcmp(contact_name, name) > 0){
+          searchContact(root->left, name);
+     }
+     else{
+          searchContact(root->right,name);
+     }
 }
 
 // Permite consultar um contato da agenda por nome
@@ -107,23 +146,6 @@ void queryContact (Contact *root)
           printContact(contact);
      }
      return;
-}
-
-// Função responsável por buscar na árvore o contato com o nome desejado
-Contact* searchContact (Contact *root, char *name)
-{
-     if(root == NULL){
-          return NULL;
-     }
-     if(strcmp(tolower(root->name), tolower(name)) == 0){
-          return root;
-     }
-     if(strcmp(tolower(root->name), tolower(name)) > 0){
-          searchContact(root->left, name);
-     }
-     else{
-          searchContact(root->right,name);
-     }
 }
 
 // Permite a atualização dos dados de um contato da agenda
