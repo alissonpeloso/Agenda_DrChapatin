@@ -10,6 +10,16 @@
 	- Caso seja detectado plágio, os grupos envolvidos receberão nota 0.
 */
 
+/*o q falta ajustar:
+    - Adicionar dois nomes no insertion.
+    - Problema de print ao digitar 10.
+    - Deixar o menu bonitinho
+    - arrumar free no del
+    - Pressione enter para mostrar (5 contatos por vez na listagem)
+    - LUXO:
+        - busca por índice (letra a), aí aparece os nomes q começam com a.
+*/
+
 #include <stdio.h> 
 #include <stdlib.h>
 #include <ctype.h>
@@ -139,7 +149,7 @@ Contact *delContact (Contact *root)
     } else {
         root = removeContact(root,contact);
     }
-    return;
+    return root;
 }
 
 //Código com tratamento de recursividade para remover um contato na árvore AVL.
@@ -156,12 +166,12 @@ Contact *removeContact(Contact *root, Contact *contactDel)
             }
             else if(root->left != NULL && root->right == NULL){
                 Contact *newRoot = root->left;
-                free(root); /*Não conseguimos dar free no Root, causa Segmentarion Fault*/
+                // free(root); /*Não conseguimos dar free no Root, causa Segmentarion Fault*/
                 return newRoot;
             }
             else if(root->left == NULL && root->right != NULL){
                 Contact *newRoot = root->right;
-                free(root);
+                // free(root);
                 return newRoot;
             }
             else{
@@ -169,14 +179,14 @@ Contact *removeContact(Contact *root, Contact *contactDel)
                 if(root->left->right == NULL){
                     newRoot = root->left;
                     newRoot->right = root->right;
-                    free(root);
+                    // free(root);
                     return newRoot;
                 }
                 else{
                     newRoot = biggestNode(root->left);
                     newRoot->left = root->left;
                     newRoot->right = root->right;
-                    free(root);
+                    // free(root);
                     return newRoot;
                 }
             }
@@ -257,6 +267,7 @@ void upContact ()
     return;
 }
 
+// Função criada para testes com print em formato da árvore
 void print2DUtil(Contact *root, int space)
 { 
     if (root == NULL){
@@ -274,23 +285,105 @@ void print2DUtil(Contact *root, int space)
     print2DUtil(root->left, space); 
 }
 
+// Função para limpar a árvore (Free) após a gravação em arquivo
+void cleanAVL(Contact *root)
+{
+    if (root == NULL){
+        return;
+    }
+    else{
+        if(root->left != NULL){
+            cleanAVL(root->left);
+        }
+        if(root->right != NULL){
+            cleanAVL(root->right);
+        }
+        free(root);
+    }
+}
+
+// Função que lê do arquivo e puxa os contatos para o programa
+Contact *fileRead(Contact *root, FILE *file)
+{
+    Contact *aux = malloc(sizeof(Contact));
+    while (fread(aux, sizeof(Contact), 1, file) > 0)
+    {
+        aux->left=NULL;/* A estrutura é salva com os ponteiros para right e left, precisamos anular para poder usar a recursividade */
+        aux->right=NULL;
+        root = AddContact(root,aux);
+        aux = malloc(sizeof(Contact));
+    }
+    free(aux);
+    return root;
+}
+
+// Função que grava os contatos do programa no arquivo, retorna o número de contatos gravados
+int fileWrite(Contact *root, FILE *file)
+{
+    int nContacts = 0;
+    if (root == NULL){
+        return 0;
+    }
+    else{
+        nContacts += fwrite(root, sizeof(Contact), 1, file);
+        if(root->left != NULL){
+            nContacts += fileWrite(root->left, file);
+        }
+        if(root->right != NULL){
+            nContacts += fileWrite(root->right, file);
+        }
+        return nContacts;
+    }
+}
+
+// Função que percorre a árvore e retorna o número de contatos na estrutura
+int numberContacts(Contact *root)
+{
+    int nContacts = 0;
+    if (root == NULL){
+        return 0;
+    }
+    else{
+        nContacts++;
+        if(root->left != NULL){
+            nContacts += numberContacts(root->left);
+        }
+        if(root->right != NULL){
+            nContacts += numberContacts(root->right);
+        }
+        return nContacts;
+    }
+}
 
 // Programa principal
 int main()
-{    
-    int op=0;
+{   
+    int op=0, nContacts = 0;
     Contact *MContact = NULL;
 
+    FILE *mainAgenda = fopen("Agenda_DrChapatin.ag","a+b");
+    if (mainAgenda == NULL)
+    {   
+        printf("Erro ao abrir arquivo.\n");
+        exit(1);
+    }
+    MContact = fileRead(MContact,mainAgenda);
+    fclose(mainAgenda);
+
+    nContacts = numberContacts(MContact);
+
     while (op!=EXIT)
-    {
+    {   
         op=menu();
         switch(op) {
             case 1 : 
                 MContact = insContact(MContact);
+                nContacts++;
                 print2DUtil(MContact,0);
                 break;
             case 2 : 
                 MContact = delContact(MContact);
+                nContacts--;
                 print2DUtil(MContact,0);
                 break;
             case 3 : 
@@ -300,13 +393,27 @@ int main()
                 queryContact(MContact);
                 break;
             case 5 : 
-                printf("\nLista de contatos:\n\n");
+                printf("\nLista de contatos:\nNúmero de Contatos: %d\n\n", nContacts);
                 listContacts(MContact);
+                break;
+            case 10:
                 break;
             default:
                 printf("\nOpção não existente\n");
         }
     }
+    mainAgenda = fopen("Agenda_DrChapatin.ag","wb");
+
+    int nwrite = fileWrite(MContact,mainAgenda);
+    fclose(mainAgenda);
+    printf("N de Contatos escritos: %d\n", nwrite);
+
+    if(nwrite != nContacts)
+    {
+        printf("Erro na gravação\n");
+    }
+
+    cleanAVL(MContact);
     return 0;
 }
 
