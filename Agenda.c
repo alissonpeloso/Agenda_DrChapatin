@@ -66,7 +66,7 @@ Contact *insContact(Contact *root);
 Contact *delContact (Contact *root);
 Contact *removeContact(Contact *root, Contact *contactDel);
 void listContacts ();
-void upContact ();
+Contact* upContact ();
 void print2DUtil(Contact *root, int space);
 
 // Função responsável por imprimir um contato
@@ -262,9 +262,61 @@ void queryContact (Contact *root)
 }
 
 // Permite a atualização dos dados de um contato da agenda
-void upContact ()
+Contact * upContact (Contact *root)
 {
-    return;
+    char name[30];
+    Contact *contact;
+    Contact *editedContact = (Contact *) malloc(sizeof(Contact));
+
+    printf("Insira o nome do contato que deseja atualizar na agenda: ");
+    scanf("%s", name);
+
+    contact = searchContact(root, name);
+
+    if (contact != NULL) { // Se o contato foi encontrado
+        // faz a leitura dos dados que serão alterados
+        printf("\n--------------- Contato encontrado ---------------\n");
+        printf("\nInsira o novo nome para o campo, caso deseje manter o valor atual digite -1:\n\n");
+        printf("Nome atual: %s\n- Novo nome: ", contact->name);
+        scanf("%s", editedContact->name);
+        printf("\nNascimento atual: %d/%d/%d\n- Nova data de nascimento: ", contact->birth.day, contact->birth.month, contact->birth.year);
+        scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
+        printf("\nEmail atual: %s\n- Novo email: ", contact->email);
+        scanf("%s", editedContact->email);
+        printf("\nTelefone atual: %s\n- Novo telefone: ", contact->phone);
+        scanf("%s", editedContact->phone);
+
+        // Caso o nome do contato não seja alterado apenas alteramos o valor dos atributos
+        if (strcmp(editedContact->name, contact->name) == 0 || strcmp(editedContact->name, "-1") == 0){
+            if(strcasecmp(editedContact->email, contact->email) != 0 && strcasecmp(editedContact->email, "-1") != 0)
+                strcpy(contact->email, editedContact->email);
+            if(strcasecmp(editedContact->phone, contact->phone) != 0 && strcasecmp(editedContact->phone, "-1") != 0)
+                strcpy(contact->phone, editedContact->phone);
+            if(editedContact->birth.day != contact->birth.day && editedContact->birth.day != -1){
+                contact->birth.day = editedContact->birth.day;
+                contact->birth.month = editedContact->birth.month;
+                contact->birth.year = editedContact->birth.year;
+            }
+            printf("\nContato alterado com sucesso!\n");
+        } else { // Caso o nome do contato seja alterado excluimos o nodo anterior e criamos um novo com os dados atualizados
+                    // e o reincerimos na tabela
+            if(strcasecmp(editedContact->email, "-1") == 0) 
+                strcpy(editedContact->email, contact->email);
+            if(strcasecmp(editedContact->phone, "-1") == 0) 
+                strcpy(editedContact->phone, contact->phone);
+            if(editedContact->birth.day == -1){
+                editedContact->birth.day = contact->birth.day;
+                editedContact->birth.month = contact->birth.month;
+                editedContact->birth.year = contact->birth.year;
+            }
+            root = removeContact(root, contact);
+            root = AddContact(root, editedContact);
+            printf("\nContato alterado com sucesso!\n");
+        }
+    } else {
+        printf("Contato não encontrado!\n");
+    }
+    return root;   
 }
 
 // Função criada para testes com print em formato da árvore
@@ -387,7 +439,7 @@ int main()
                 print2DUtil(MContact,0);
                 break;
             case 3 : 
-                upContact();
+                MContact = upContact(MContact);
                 break;
             case 4 : 
                 queryContact(MContact);
