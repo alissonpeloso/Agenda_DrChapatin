@@ -12,9 +12,10 @@
 
 /*o q falta ajustar:
     - Adicionar dois nomes no insertion.
-    - Problema de print ao digitar 10.
+    - resolver conflito de nomes iguais.
     - Deixar o menu bonitinho
     - arrumar free no del
+    - ajustar código (separar em .h e deixar bonito)
     - Pressione enter para mostrar (5 contatos por vez na listagem)
     - LUXO:
         - busca por índice (letra a), aí aparece os nomes q começam com a.
@@ -458,11 +459,10 @@ int main()
 
     int nwrite = fileWrite(MContact,mainAgenda);
     fclose(mainAgenda);
-    printf("N de Contatos escritos: %d\n", nwrite);
-
     if(nwrite != nContacts)
     {
-        printf("Erro na gravação\n");
+        printf("Problema na gravação\n");
+        exit(1);
     }
 
     cleanAVL(MContact);
