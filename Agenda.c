@@ -37,14 +37,10 @@ int menu()
 {
     int op=0;
 
-    printf("-----------------------------------------------------------------\n\n");
-    printf("Para Encerrar o programa digite: %d\n", EXIT);     
-    printf("Para adicionar um novo contato digite: 1\n");     
-    printf("Para deletar um contato digite: 2\n");     
-    printf("Para atualizar um contato digite: 3\n");     
-    printf("Para buscar um contato digite: 4\n");     
-    printf("Para listar os contatos digite: 5\n");     
-
+    printf("----------------------------------------------------------------------------\n");
+    printf("1 - Criar novo contato | 2 - Deletar um Contato | 3 - Atualizar um contato \n4 - Buscar um Contato  | 5 - Listar Contatos    | 10 - Encerrar\n");   
+    printf("----------------------------------------------------------------------------\n");
+    
     printf("\nOpção desejada: ");
     scanf("%d",&op);
      
