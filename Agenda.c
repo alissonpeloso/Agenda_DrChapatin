@@ -11,8 +11,6 @@
 */
 
 /*o q falta ajustar:
-    - resolver conflito de nomes iguais.
-    - Deixar o menu bonitinho
     - arrumar free no del
     - Pressione enter para mostrar (5 contatos por vez na listagem)
     - LUXO:
@@ -73,6 +71,12 @@ Contact *insContact(Contact *root)
     printf("Insira o nome do contato que deseja adicionar na agenda: ");
     getchar();
     scanf("%[^\n]s", newContact->name);
+    Contact *aux = searchContact(root,newContact->name);
+    if(aux != NULL){
+        printf("\n");
+        printf("ERRO: Esse contato já existe!\n");
+        return root;
+    }
     printf("Insira o aniversário do contato: (dia/mes/ano) ");
     scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
     printf("Insira o email do contato: ");
@@ -331,12 +335,12 @@ int main()
             case 1 : 
                 MContact = insContact(MContact);
                 nContacts++;
-                print2DUtil(MContact,0);
+                // print2DUtil(MContact,0);
                 break;
             case 2 : 
                 MContact = delContact(MContact);
                 nContacts--;
-                print2DUtil(MContact,0);
+                // print2DUtil(MContact,0);
                 break;
             case 3 : 
                 MContact = upContact(MContact);
