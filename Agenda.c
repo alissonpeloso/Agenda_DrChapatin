@@ -15,7 +15,6 @@
     - resolver conflito de nomes iguais.
     - Deixar o menu bonitinho
     - arrumar free no del
-    - ajustar código (separar em .h e deixar bonito)
     - Pressione enter para mostrar (5 contatos por vez na listagem)
     - LUXO:
         - busca por índice (letra a), aí aparece os nomes q começam com a.
@@ -25,60 +24,14 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "AVL.h"
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
-//Struct que representa a data.
-typedef struct 
-{
-	int day;
-	int month;
-	int year;
-} Date;
+//Structs foram transferidas para AVL.h, para melhor organização :)
 
-// Estrutura que contém os campos dos registros da agenda
-struct MREC 
-{
-    char name[30];
-    Date  birth; 
-    char email[40];
-    char phone[15];
-	struct MREC *right;
-    struct MREC *left;
-};
-
-// Tipo criado para instanciar variaveis do tipo agenda
-typedef struct MREC Contact;
-
-//Instanciamento das funções para tratar ordem de utilização
-void printContact(Contact *contact);
-int heightThree(Contact *root);
-Contact *RR(Contact *root);
-Contact *LL(Contact *root);
-Contact *LR(Contact *root);
-Contact *RL(Contact *root);
-int fBalance(Contact *root);
-Contact *balanceTree(Contact *root);
-Contact *biggestNode(Contact *root);
+//Pré-instanciamento para atender uso da função nas demais funções
 Contact* searchContact (Contact *root, char *name);
-void queryContact (Contact *root);
-Contact *AddContact(Contact *root, Contact *newContact);
-Contact *insContact(Contact *root);
-Contact *delContact (Contact *root);
-Contact *removeContact(Contact *root, Contact *contactDel);
-void listContacts ();
-Contact* upContact ();
-void print2DUtil(Contact *root, int space);
-
-// Função responsável por imprimir um contato
-void printContact(Contact *contact)
-{
-     printf("Nome: %s\n", contact->name);
-     printf("Nascimento: %d/%d/%d\n", contact->birth.day, contact->birth.month, contact->birth.year);
-     printf("Email: %s\n", contact->email);
-     printf("Telefone: %s\n", contact->phone);
-     printf("-----------------------------------------------------------------\n");
-}
 
 // Apresenta o menu da aplicação e retorna a opção selecionada
 int menu()
@@ -134,25 +87,6 @@ Contact *insContact(Contact *root)
     return root;
 }
 
-// Permite excluir um contato da agenda
-Contact *delContact (Contact *root)
-{   
-    char name[30];
-
-    printf("Insira o nome do contato que deseja deletar da agenda: ");
-    scanf("%s", name);
-
-    Contact *contact = searchContact(root, name);
-
-    if(contact == NULL) {
-        printf("-----------------------------------------------------------------\n\n");
-        printf("O contado não foi encontrado\n");
-    } else {
-        root = removeContact(root,contact);
-    }
-    return root;
-}
-
 //Código com tratamento de recursividade para remover um contato na árvore AVL.
 Contact *removeContact(Contact *root, Contact *contactDel)
 {
@@ -200,6 +134,25 @@ Contact *removeContact(Contact *root, Contact *contactDel)
         }
     }
     root = balanceTree(root);
+    return root;
+}
+
+// Permite excluir um contato da agenda
+Contact *delContact (Contact *root)
+{   
+    char name[30];
+
+    printf("Insira o nome do contato que deseja deletar da agenda: ");
+    scanf("%s", name);
+
+    Contact *contact = searchContact(root, name);
+
+    if(contact == NULL) {
+        printf("-----------------------------------------------------------------\n\n");
+        printf("O contado não foi encontrado\n");
+    } else {
+        root = removeContact(root,contact);
+    }
     return root;
 }
 
@@ -320,41 +273,6 @@ Contact * upContact (Contact *root)
     return root;   
 }
 
-// Função criada para testes com print em formato da árvore
-void print2DUtil(Contact *root, int space)
-{ 
-    if (root == NULL){
-    return; 
-    }    
-    space += 10; 
-
-    print2DUtil(root->right, space); 
-
-    printf("\n"); 
-    for (int i = 10; i < space; i++) 
-    printf(" "); 
-    printf("%s\n", root->name); 
-   
-    print2DUtil(root->left, space); 
-}
-
-// Função para limpar a árvore (Free) após a gravação em arquivo
-void cleanAVL(Contact *root)
-{
-    if (root == NULL){
-        return;
-    }
-    else{
-        if(root->left != NULL){
-            cleanAVL(root->left);
-        }
-        if(root->right != NULL){
-            cleanAVL(root->right);
-        }
-        free(root);
-    }
-}
-
 // Função que lê do arquivo e puxa os contatos para o programa
 Contact *fileRead(Contact *root, FILE *file)
 {
@@ -384,25 +302,6 @@ int fileWrite(Contact *root, FILE *file)
         }
         if(root->right != NULL){
             nContacts += fileWrite(root->right, file);
-        }
-        return nContacts;
-    }
-}
-
-// Função que percorre a árvore e retorna o número de contatos na estrutura
-int numberContacts(Contact *root)
-{
-    int nContacts = 0;
-    if (root == NULL){
-        return 0;
-    }
-    else{
-        nContacts++;
-        if(root->left != NULL){
-            nContacts += numberContacts(root->left);
-        }
-        if(root->right != NULL){
-            nContacts += numberContacts(root->right);
         }
         return nContacts;
     }
@@ -467,106 +366,4 @@ int main()
 
     cleanAVL(MContact);
     return 0;
-}
-
-int biggestInt(int a, int b)
-{
-    return (a > b) ? a : b; 
-}
-
-int heightThree(Contact *root)
-{
-    int right=0, left=0;
-    if (root == NULL){
-        return 0;
-    }
-    else{
-        if (root->left == NULL && root->right == NULL){
-            return 1;
-        }
-        else{
-            if (root->right != NULL){
-                right = (1 + heightThree(root->right));
-            }
-            if (root->left != NULL){
-                left = (1 + heightThree(root->left));
-            }
-            return biggestInt(right, left);
-        }
-    }
-}
-
-Contact *RR(Contact *root)
-{
-    Contact *newRoot = root->right;
-    root->right = newRoot->left;
-    newRoot->left = root;
-    return newRoot;
-}
-
-Contact *LL(Contact *root)
-{
-    Contact *newRoot = root->left;
-    root->left = newRoot->right;
-    newRoot->right = root;
-    return newRoot;
-}
-
-Contact *LR(Contact *root)
-{
-    root->left = RR(root->left);
-    Contact *newRoot = LL(root);
-    return newRoot;
-}
-
-Contact *RL(Contact *root)
-{
-    root->right = LL(root->right);
-    Contact *newRoot = RR(root);
-    return newRoot;
-}
-
-int fBalance(Contact *root)
-{
-    int heightLeft = heightThree(root->left), heightRight = heightThree(root->right);
-    return (heightLeft-heightRight);
-}
-
-Contact *balanceTree(Contact *root)
-{
-    int diff = fBalance(root);
-    if(diff > 1){
-        if(fBalance(root->left) < 0){
-            root = LR(root);
-        } 
-        else{
-            root = LL(root);
-        }
-    }
-    else if(diff < -1){
-        if(fBalance(root->right) < 0){
-            root = RR(root);
-        } else{
-            root = RL(root);
-        }
-    }
-    return root;
-}
-
-Contact *biggestNode(Contact *root)
-{
-    Contact *father = root;
-
-    if (root == NULL){
-        printf("Não pode entrar aqui, se entra tem erro de lógica.\n\n");
-    }
-
-    root = root->right;
-    while(root->right != NULL){
-        father = root;
-        root = root->right;
-    }
-    //aqui o root ja é o maior, não tem filhos a direita.
-    father->right = root->left; //tirei o root da árvore
-    return root;
 }
