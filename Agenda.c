@@ -11,7 +11,6 @@
 */
 
 /*o q falta ajustar:
-    - Adicionar dois nomes no insertion.
     - resolver conflito de nomes iguais.
     - Deixar o menu bonitinho
     - arrumar free no del
@@ -76,9 +75,10 @@ Contact *insContact(Contact *root)
     Contact *newContact = (Contact *) malloc(sizeof(Contact));
     printf("\n");
     printf("Insira o nome do contato que deseja adicionar na agenda: ");
-    scanf("%s", newContact->name);
+    getchar();
+    scanf("%[^\n]s", newContact->name);
     printf("Insira o aniversário do contato: (dia/mes/ano) ");
-    scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+    scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
     printf("Insira o email do contato: ");
     scanf("%s", newContact->email);
     printf("Insira o telefone do contato: ");
@@ -143,7 +143,8 @@ Contact *delContact (Contact *root)
     char name[30];
 
     printf("Insira o nome do contato que deseja deletar da agenda: ");
-    scanf("%s", name);
+    getchar();
+    scanf("%[^\n]s", name);
 
     Contact *contact = searchContact(root, name);
 
@@ -200,7 +201,8 @@ void queryContact (Contact *root)
     Contact *contact;
 
     printf("Insira o nome do contato que deseja buscar na agenda: ");
-    scanf("%s", name);
+    getchar();
+    scanf("%[^\n]s", name);
 
     contact = searchContact(root, name);
 
@@ -223,7 +225,8 @@ Contact * upContact (Contact *root)
     Contact *editedContact = (Contact *) malloc(sizeof(Contact));
 
     printf("Insira o nome do contato que deseja atualizar na agenda: ");
-    scanf("%s", name);
+    getchar();
+    scanf("%[^\n]s", name);
 
     contact = searchContact(root, name);
 
@@ -232,7 +235,8 @@ Contact * upContact (Contact *root)
         printf("\n--------------- Contato encontrado ---------------\n");
         printf("\nInsira o novo nome para o campo, caso deseje manter o valor atual digite -1:\n\n");
         printf("Nome atual: %s\n- Novo nome: ", contact->name);
-        scanf("%s", editedContact->name);
+        getchar();
+        scanf("%[^\n]s", editedContact->name);
         printf("\nNascimento atual: %d/%d/%d\n- Nova data de nascimento: ", contact->birth.day, contact->birth.month, contact->birth.year);
         scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
         printf("\nEmail atual: %s\n- Novo email: ", contact->email);
