@@ -77,12 +77,17 @@ Contact *insContact(Contact *root)
         printf("ERRO: Esse contato já existe!\n");
         return root;
     }
-    printf("Insira o aniversário do contato: (dia/mes/ano) ");
+    printf("Insira o aniversário do contato (dia/mes/ano): ");
     scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
-    printf("Insira o email do contato: ");
+    while(newContact->birth.day > 31 || newContact->birth.day < 1 || newContact->birth.month < 1 || newContact->birth.month > 12 || newContact->birth.year < 1000 || newContact->birth.year > 2020){
+        printf("ERRO: Insira um valor válido: (dia/mes/ano) ");
+        scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+    }
+    printf("Insira o email do contato (example@example.com): ");
     scanf("%s", newContact->email);
-    printf("Insira o telefone do contato: ");
-    scanf("%s", newContact->phone);
+    printf("Insira o telefone do contato ((99)99999-9999):");
+    getchar();
+    scanf("%[^\n]s", newContact->phone);
     root = AddContact(root,newContact);
     return root;
 }
@@ -335,12 +340,12 @@ int main()
             case 1 : 
                 MContact = insContact(MContact);
                 nContacts++;
-                // print2DUtil(MContact,0);
+                // print2DUtil(MContact,0); /*utilizado para printar em formato de arvore*/
                 break;
             case 2 : 
                 MContact = delContact(MContact);
                 nContacts--;
-                // print2DUtil(MContact,0);
+                // print2DUtil(MContact,0); /*utilizado para printar em formato de arvore*/
                 break;
             case 3 : 
                 MContact = upContact(MContact);
