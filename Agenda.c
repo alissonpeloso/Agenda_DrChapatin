@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "AVL.h"
+#include <termios.h>
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
@@ -41,7 +42,7 @@ int menu()
     
     printf("\nOpção desejada: ");
     scanf("%d",&op);
-     
+            
     return op;
 }
 
@@ -68,7 +69,7 @@ Contact *insContact(Contact *root)
 {    
     Contact *newContact = (Contact *) malloc(sizeof(Contact));
     printf("\n");
-    printf("Insira o nome do contato que deseja adicionar na agenda: ");
+    printf("- Insira o nome do contato que deseja adicionar na agenda: ");
     getchar();
     scanf("%[^\n]s", newContact->name);
     Contact *aux = searchContact(root,newContact->name);
@@ -77,18 +78,19 @@ Contact *insContact(Contact *root)
         printf("ERRO: Esse contato já existe!\n");
         return root;
     }
-    printf("Insira o aniversário do contato (dia/mes/ano): ");
-    scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+    printf("- Insira o aniversário do contato (dia/mes/ano): ");
+    scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
     while(newContact->birth.day > 31 || newContact->birth.day < 1 || newContact->birth.month < 1 || newContact->birth.month > 12 || newContact->birth.year < 1000 || newContact->birth.year > 2020){
-        printf("ERRO: Insira um valor válido: (dia/mes/ano) ");
-        scanf("%d/%d/%d%c", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
+        printf("*ERRO*: Insira uma data válida (dia/mes/ano): ");
+        scanf("%d/%d/%d", &newContact->birth.day, &newContact->birth.month, &newContact->birth.year);
     }
-    printf("Insira o email do contato (example@example.com): ");
+    printf("- Insira o email do contato (example@example.com): ");
     scanf("%s", newContact->email);
-    printf("Insira o telefone do contato ((99)99999-9999):");
+    printf("- Insira o telefone do contato ((99)99999-9999): ");
     getchar();
     scanf("%[^\n]s", newContact->phone);
     root = AddContact(root,newContact);
+    printf("\n\t**Contato inserido com sucesso!**\n");
     return root;
 }
 
@@ -147,7 +149,7 @@ Contact *delContact (Contact *root)
 {   
     char name[30];
 
-    printf("Insira o nome do contato que deseja deletar da agenda: ");
+    printf("- Insira o nome do contato que deseja deletar da agenda: ");
     getchar();
     scanf("%[^\n]s", name);
 
@@ -155,9 +157,10 @@ Contact *delContact (Contact *root)
 
     if(contact == NULL) {
         printf("-----------------------------------------------------------------\n\n");
-        printf("O contado não foi encontrado\n");
+        printf("*ERRO*: O contado não foi encontrado\n");
     } else {
         root = removeContact(root,contact);
+        printf("\n\t**Contato removido com sucesso!**\n");
     }
     return root;
 }
@@ -205,7 +208,7 @@ void queryContact (Contact *root)
     char name[30];
     Contact *contact;
 
-    printf("Insira o nome do contato que deseja buscar na agenda: ");
+    printf("- Insira o nome do contato que deseja buscar na agenda: ");
     getchar();
     scanf("%[^\n]s", name);
 
@@ -213,10 +216,10 @@ void queryContact (Contact *root)
 
     if(contact == NULL) {
         printf("-----------------------------------------------------------------\n\n");
-        printf("O contado não foi encontrado\n");
+        printf("*ERRO*: O contado não foi encontrado\n");
     } else {
         printf("-----------------------------------------------------------------\n\n");
-        printf("Contato buscado:\n");
+        printf("\n\t**Contato buscado:**\n");
         printContact(contact);
     }
     return;
@@ -229,7 +232,7 @@ Contact * upContact (Contact *root)
     Contact *contact;
     Contact *editedContact = (Contact *) malloc(sizeof(Contact));
 
-    printf("Insira o nome do contato que deseja atualizar na agenda: ");
+    printf("- Insira o nome do contato que deseja atualizar na agenda: ");
     getchar();
     scanf("%[^\n]s", name);
 
@@ -238,16 +241,21 @@ Contact * upContact (Contact *root)
     if (contact != NULL) { // Se o contato foi encontrado
         // faz a leitura dos dados que serão alterados
         printf("\n--------------- Contato encontrado ---------------\n");
-        printf("\nInsira o novo nome para o campo, caso deseje manter o valor atual digite -1:\n\n");
+        printf("\n*Insira o novo nome para o campo, caso deseje manter o valor atual digite -1*\n\n");
         printf("Nome atual: %s\n- Novo nome: ", contact->name);
         getchar();
         scanf("%[^\n]s", editedContact->name);
-        printf("\nNascimento atual: %d/%d/%d\n- Nova data de nascimento: ", contact->birth.day, contact->birth.month, contact->birth.year);
+        printf("\nNascimento atual: %d/%d/%d\n- Nova data de nascimento (dia/mes/ano): ", contact->birth.day, contact->birth.month, contact->birth.year);
         scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
-        printf("\nEmail atual: %s\n- Novo email: ", contact->email);
+        while(editedContact->birth.day > 31 || editedContact->birth.day < 1 || editedContact->birth.month < 1 || editedContact->birth.month > 12 || editedContact->birth.year < 1000 || editedContact->birth.year > 2020){
+            printf("ERRO: Insira uma data válida (dia/mes/ano): ");
+            scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
+        }              
+        printf("\nEmail atual: %s\n- Novo email (example@example.com): ", contact->email);
         scanf("%s", editedContact->email);
-        printf("\nTelefone atual: %s\n- Novo telefone: ", contact->phone);
-        scanf("%s", editedContact->phone);
+        printf("\nTelefone atual: %s\n- Novo telefone ((99)99999-9999): ", contact->phone);
+        getchar();
+        scanf("%[^\n]s", editedContact->phone);
 
         // Caso o nome do contato não seja alterado apenas alteramos o valor dos atributos
         if (strcmp(editedContact->name, contact->name) == 0 || strcmp(editedContact->name, "-1") == 0){
@@ -260,7 +268,7 @@ Contact * upContact (Contact *root)
                 contact->birth.month = editedContact->birth.month;
                 contact->birth.year = editedContact->birth.year;
             }
-            printf("\nContato alterado com sucesso!\n");
+            printf("\n\t**Contato alterado com sucesso!**\n");
         } else { // Caso o nome do contato seja alterado excluimos o nodo anterior e criamos um novo com os dados atualizados
                     // e o reincerimos na tabela
             if(strcasecmp(editedContact->email, "-1") == 0) 
@@ -274,10 +282,10 @@ Contact * upContact (Contact *root)
             }
             root = removeContact(root, contact);
             root = AddContact(root, editedContact);
-            printf("\nContato alterado com sucesso!\n");
+            printf("\n\t**Contato alterado com sucesso!**\n");
         }
     } else {
-        printf("Contato não encontrado!\n");
+        printf("*ERRO*: Contato não encontrado!\n");
     }
     return root;   
 }
@@ -340,12 +348,10 @@ int main()
             case 1 : 
                 MContact = insContact(MContact);
                 nContacts++;
-                // print2DUtil(MContact,0); /*utilizado para printar em formato de arvore*/
                 break;
             case 2 : 
                 MContact = delContact(MContact);
                 nContacts--;
-                // print2DUtil(MContact,0); /*utilizado para printar em formato de arvore*/
                 break;
             case 3 : 
                 MContact = upContact(MContact);
@@ -354,10 +360,11 @@ int main()
                 queryContact(MContact);
                 break;
             case 5 : 
-                printf("\nLista de contatos:\nNúmero de Contatos: %d\n\n", nContacts);
+                printf("\n***Lista de contatos***\nNúmero de Contatos: %d\n\n", nContacts);
                 listContacts(MContact);
                 break;
             case 10:
+                system("exit");
                 break;
             default:
                 printf("\nOpção não existente\n");
