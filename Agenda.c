@@ -12,7 +12,6 @@
 
 /*o q falta ajustar:
     - arrumar free no del
-    - Pressione enter para mostrar (5 contatos por vez na listagem)
     - LUXO:
         - busca por índice (letra a), aí aparece os nomes q começam com a.
 */
@@ -22,7 +21,6 @@
 #include <ctype.h>
 #include <string.h>
 #include "AVL.h"
-#include <termios.h>
 
 #define EXIT 10  // valor fixo para a opção que finaliza a aplicação
 
@@ -35,10 +33,10 @@ Contact* searchContact (Contact *root, char *name);
 int menu()
 {
     int op=0;
-
-    printf("----------------------------------------------------------------------------\n");
+    printf("\nSelecione a opção desejada abaixo:\n");
+    printf("================================== MENU ==================================\n");
     printf("1 - Criar novo contato | 2 - Deletar um Contato | 3 - Atualizar um contato \n4 - Buscar um Contato  | 5 - Listar Contatos    | 10 - Encerrar\n");   
-    printf("----------------------------------------------------------------------------\n");
+    printf("==========================================================================\n");
     
     printf("\nOpção desejada: ");
     scanf("%d",&op);
@@ -101,37 +99,32 @@ Contact *removeContact(Contact *root, Contact *contactDel)
         return NULL;
     } 
     else{
+        Contact *newRoot;
         if(strcasecmp(root->name,contactDel->name) == 0){
             if(root->left == NULL && root->right == NULL){
-                free(root);
                 return NULL;
             }
             else if(root->left != NULL && root->right == NULL){
-                Contact *newRoot = root->left;
-                // free(root); /*Não conseguimos dar free no Root, causa Segmentarion Fault*/
+                newRoot = root->left;
                 return newRoot;
             }
             else if(root->left == NULL && root->right != NULL){
-                Contact *newRoot = root->right;
-                // free(root);
+                newRoot = root->right;
                 return newRoot;
             }
             else{
-                Contact *newRoot;
                 if(root->left->right == NULL){
                     newRoot = root->left;
                     newRoot->right = root->right;
-                    // free(root);
-                    return newRoot;
                 }
                 else{
                     newRoot = biggestNode(root->left);
                     newRoot->left = root->left;
                     newRoot->right = root->right;
-                    // free(root);
-                    return newRoot;
                 }
             }
+            // free(root);
+            return newRoot;
         }
         else if(strcasecmp(root->name,contactDel->name) > 0){
             root->left = removeContact(root->left, contactDel);
@@ -341,6 +334,10 @@ int main()
 
     nContacts = numberContacts(MContact);
 
+    printf("\n###########################################################################\n");
+    printf("#                       [ Bem-vindo Dr. Chapatin ]                        #\n");
+    printf("###########################################################################\n");
+
     while (op!=EXIT)
     {   
         op=menu();
@@ -362,6 +359,7 @@ int main()
             case 5 : 
                 printf("\n***Lista de contatos***\nNúmero de Contatos: %d\n\n", nContacts);
                 listContacts(MContact);
+                print2DUtil(MContact,0);
                 break;
             case 10:
                 system("exit");
