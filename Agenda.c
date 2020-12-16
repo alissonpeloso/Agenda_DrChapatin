@@ -27,14 +27,16 @@ Contact* searchContact (Contact *root, char *name);
 int menu()
 {
     int op=0;
-    printf("\nSelecione a opção desejada abaixo:\n");
-    printf("================================== MENU ==================================\n");
+    char opInStr[50];
+
+    printf("----------------------------------------------------------------------------\n");
     printf("1 - Criar novo contato | 2 - Deletar um Contato | 3 - Atualizar um contato \n4 - Buscar um Contato  | 5 - Listar Contatos    | 10 - Encerrar\n");   
-    printf("==========================================================================\n");
+    printf("----------------------------------------------------------------------------\n");
     
     printf("\nOpção desejada: ");
-    scanf("%d",&op);
-            
+    scanf("%s", opInStr);
+   
+    op = atoi(opInStr);
     return op;
 }
 
