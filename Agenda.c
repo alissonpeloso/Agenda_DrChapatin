@@ -10,12 +10,6 @@
 	- Caso seja detectado plágio, os grupos envolvidos receberão nota 0.
 */
 
-/*o q falta ajustar:
-    - arrumar free no del
-    - LUXO:
-        - busca por índice (letra a), aí aparece os nomes q começam com a.
-*/
-
 #include <stdio.h> 
 #include <stdlib.h>
 #include <ctype.h>
@@ -47,6 +41,8 @@ int menu()
 //Código com tratamento de recursividade para adicionar um contato na árvore AVL.
 Contact *AddContact(Contact *root, Contact *newContact)
 {
+    newContact->right = NULL;
+    newContact->left = NULL;
     if (root == NULL){
         return newContact;
     } 
@@ -106,11 +102,9 @@ Contact *removeContact(Contact *root, Contact *contactDel)
             }
             else if(root->left != NULL && root->right == NULL){
                 newRoot = root->left;
-                return newRoot;
             }
             else if(root->left == NULL && root->right != NULL){
                 newRoot = root->right;
-                return newRoot;
             }
             else{
                 if(root->left->right == NULL){
@@ -123,7 +117,8 @@ Contact *removeContact(Contact *root, Contact *contactDel)
                     newRoot->right = root->right;
                 }
             }
-            // free(root);
+            free(root);
+            newRoot = balanceTree(newRoot);
             return newRoot;
         }
         else if(strcasecmp(root->name,contactDel->name) > 0){
@@ -289,8 +284,6 @@ Contact *fileRead(Contact *root, FILE *file)
     Contact *aux = malloc(sizeof(Contact));
     while (fread(aux, sizeof(Contact), 1, file) > 0)
     {
-        aux->left=NULL;/* A estrutura é salva com os ponteiros para right e left, precisamos anular para poder usar a recursividade */
-        aux->right=NULL;
         root = AddContact(root,aux);
         aux = malloc(sizeof(Contact));
     }
@@ -359,7 +352,6 @@ int main()
             case 5 : 
                 printf("\n***Lista de contatos***\nNúmero de Contatos: %d\n\n", nContacts);
                 listContacts(MContact);
-                print2DUtil(MContact,0);
                 break;
             case 10:
                 system("exit");
