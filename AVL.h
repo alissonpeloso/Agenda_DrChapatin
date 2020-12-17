@@ -1,19 +1,19 @@
 //Struct que representa a data.
-typedef struct 
+typedef struct
 {
-	int day;
-	int month;
-	int year;
+    int day;
+    int month;
+    int year;
 } Date;
 
 // Estrutura que contém os campos dos registros da agenda
-struct MREC 
+struct MREC
 {
     char name[30];
-    Date  birth; 
+    Date birth;
     char email[40];
     char phone[15];
-	struct MREC *right;
+    struct MREC *right;
     struct MREC *left;
 };
 
@@ -23,35 +23,41 @@ typedef struct MREC Contact;
 // Função responsável por imprimir um contato
 void printContact(Contact *contact)
 {
-     printf("Nome: %s\n", contact->name);
-     printf("Nascimento: %d/%d/%d\n", contact->birth.day, contact->birth.month, contact->birth.year);
-     printf("Email: %s\n", contact->email);
-     printf("Telefone: %s\n", contact->phone);
-     printf("-----------------------------------------------------------------\n");
+    printf("Nome: %s\n", contact->name);
+    printf("Nascimento: %d/%d/%d\n", contact->birth.day, contact->birth.month, contact->birth.year);
+    printf("Email: %s\n", contact->email);
+    printf("Telefone: %s\n", contact->phone);
+    printf("-----------------------------------------------------------------\n");
 }
 
 //Função que compara e retorna o maior inteiro, utilizada na função heighThree.
 int biggestInt(int a, int b)
 {
-    return (a > b) ? a : b; 
+    return (a > b) ? a : b;
 }
 
 //Função que percorre a árvore e retorna a altura (int)
 int heightThree(Contact *root)
 {
-    int right=0, left=0;
-    if (root == NULL){
+    int right = 0, left = 0;
+    if (root == NULL)
+    {
         return 0;
     }
-    else{
-        if (root->left == NULL && root->right == NULL){
+    else
+    {
+        if (root->left == NULL && root->right == NULL)
+        {
             return 1;
         }
-        else{
-            if (root->right != NULL){
+        else
+        {
+            if (root->right != NULL)
+            {
                 right = (1 + heightThree(root->right));
             }
-            if (root->left != NULL){
+            if (root->left != NULL)
+            {
                 left = (1 + heightThree(root->left));
             }
             return biggestInt(right, left);
@@ -97,25 +103,32 @@ Contact *RL(Contact *root)
 int fBalance(Contact *root)
 {
     int heightLeft = heightThree(root->left), heightRight = heightThree(root->right);
-    return (heightLeft-heightRight);
+    return (heightLeft - heightRight);
 }
 
-//Função que verifica as situação e realiza a operação adequada para equilibrar a árvore
+//Função que verifica a situação e realiza a operação adequada para equilibrar a árvore
 Contact *balanceTree(Contact *root)
 {
     int diff = fBalance(root);
-    if(diff > 1){
-        if(fBalance(root->left) < 0){
+    if (diff > 1)
+    {
+        if (fBalance(root->left) < 0)
+        {
             root = LR(root);
-        } 
-        else{
+        }
+        else
+        {
             root = LL(root);
         }
     }
-    else if(diff < -1){
-        if(fBalance(root->right) < 0){
+    else if (diff < -1)
+    {
+        if (fBalance(root->right) < 0)
+        {
             root = RR(root);
-        } else{
+        }
+        else
+        {
             root = RL(root);
         }
     }
@@ -127,12 +140,14 @@ Contact *biggestNode(Contact *root)
 {
     Contact *father = root;
 
-    if (root == NULL){
+    if (root == NULL)
+    {
         printf("Não pode entrar aqui, se entra tem erro de lógica.\n\n");
     }
 
     root = root->right;
-    while(root->right != NULL){
+    while (root->right != NULL)
+    {
         father = root;
         root = root->right;
     }
@@ -143,33 +158,38 @@ Contact *biggestNode(Contact *root)
 
 // Função criada para testes com print em formato da árvore
 void print2DUtil(Contact *root, int space)
-{ 
-    if (root == NULL){
-    return; 
-    }    
-    space += 10; 
+{
+    if (root == NULL)
+    {
+        return;
+    }
+    space += 10;
 
-    print2DUtil(root->right, space); 
+    print2DUtil(root->right, space);
 
-    printf("\n"); 
-    for (int i = 10; i < space; i++) 
-    printf(" "); 
-    printf("%s\n", root->name); 
-   
-    print2DUtil(root->left, space); 
+    printf("\n");
+    for (int i = 10; i < space; i++)
+        printf(" ");
+    printf("%s\n", root->name);
+
+    print2DUtil(root->left, space);
 }
 
 // Função para limpar a árvore (Free) após a gravação em arquivo
 void cleanAVL(Contact *root)
 {
-    if (root == NULL){
+    if (root == NULL)
+    {
         return;
     }
-    else{
-        if(root->left != NULL){
+    else
+    {
+        if (root->left != NULL)
+        {
             cleanAVL(root->left);
         }
-        if(root->right != NULL){
+        if (root->right != NULL)
+        {
             cleanAVL(root->right);
         }
         free(root);
@@ -180,15 +200,19 @@ void cleanAVL(Contact *root)
 int numberContacts(Contact *root)
 {
     int nContacts = 0;
-    if (root == NULL){
+    if (root == NULL)
+    {
         return 0;
     }
-    else{
+    else
+    {
         nContacts++;
-        if(root->left != NULL){
+        if (root->left != NULL)
+        {
             nContacts += numberContacts(root->left);
         }
-        if(root->right != NULL){
+        if (root->right != NULL)
+        {
             nContacts += numberContacts(root->right);
         }
         return nContacts;
