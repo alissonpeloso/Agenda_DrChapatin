@@ -269,11 +269,16 @@ Contact *upContact(Contact *root)
         scanf("%[^\n]s", editedContact->name);
         printf("\nNascimento atual: %d/%d/%d\n- Nova data de nascimento (dia/mes/ano): ", contact->birth.day, contact->birth.month, contact->birth.year);
         scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
-        while (editedContact->birth.day > 31 || editedContact->birth.day < 1 || editedContact->birth.month < 1 || editedContact->birth.month > 12 || editedContact->birth.year < 1000 || editedContact->birth.year > 2020)
+        
+        if(editedContact->birth.day != -1)
         {
-            printf("ERRO: Insira uma data válida (dia/mes/ano): ");
-            scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
+            while (editedContact->birth.day > 31 || editedContact->birth.day == 0 || editedContact->birth.month < 1 || editedContact->birth.month > 12 || editedContact->birth.year < 1000 || editedContact->birth.year > 2020)
+            {
+                printf("ERRO: Insira uma data válida (dia/mes/ano): ");
+                scanf("%d/%d/%d", &editedContact->birth.day, &editedContact->birth.month, &editedContact->birth.year);
+            }
         }
+
         printf("\nEmail atual: %s\n- Novo email (example@example.com): ", contact->email);
         scanf("%s", editedContact->email);
         printf("\nTelefone atual: %s\n- Novo telefone ((99)99999-9999): ", contact->phone);
