@@ -151,8 +151,7 @@ Contact *biggestNode(Contact *root)
         father = root;
         root = root->right;
     }
-    //aqui o root ja é o maior, não tem filhos a direita.
-    father->right = root->left; //tirei o root da árvore
+    father->right = root->left; 
     return root;
 }
 

@@ -30,7 +30,7 @@ int menu()
     char opInStr[50];
 
     printf("----------------------------------------------------------------------------\n");
-    printf("1 - Criar novo contato | 2 - Deletar um Contato | 3 - Atualizar um contato \n4 - Buscar um Contato  | 5 - Listar Contatos    | 10 - Encerrar\n");
+    printf("1 - Criar novo contato | 2 - Deletar um Contato | 3 - Atualizar um contato \n4 - Buscar um Contato  | 5 - Listar Contatos    | 10 - Encerrar e Salvar\n");
     printf("----------------------------------------------------------------------------\n");
 
     printf("\nOpção desejada: ");
@@ -68,15 +68,13 @@ Contact *AddContact(Contact *root, Contact *newContact)
 Contact *insContact(Contact *root)
 {
     Contact *newContact = (Contact *)malloc(sizeof(Contact));
-    printf("\n");
-    printf("- Insira o nome do contato que deseja adicionar na agenda: ");
+    printf("\n- Insira o nome do contato que deseja adicionar na agenda: ");
     getchar();
     scanf("%[^\n]s", newContact->name);
     Contact *aux = searchContact(root, newContact->name);
     if (aux != NULL)
     {
-        printf("\n");
-        printf("*ERRO*: Esse contato já existe!\n");
+        printf("\n*ERRO*: Esse contato já existe!\n");
         return root;
     }
     printf("- Insira o aniversário do contato (dia/mes/ano): ");
