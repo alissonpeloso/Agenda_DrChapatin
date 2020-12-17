@@ -207,7 +207,7 @@ void queryContact (Contact *root)
         printf("*ERRO*: O contado não foi encontrado\n");
     } else {
         printf("-----------------------------------------------------------------\n\n");
-        printf("\n\t**Contato buscado:**\n");
+        printf("**Contato buscado:**\n\n");
         printContact(contact);
     }
     return;
